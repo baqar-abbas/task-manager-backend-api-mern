@@ -244,7 +244,7 @@ const updateProfile = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    // In a real app, you might blacklist the token here
+    // In a real production app, we might block the token here
     // For now, we'll just return success - client should remove token
 
     res.status(200).json({
