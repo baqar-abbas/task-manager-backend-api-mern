@@ -42,7 +42,11 @@ const createTask = async (req, res) => {
 
     // Emit socket event for real-time update
     if (req.app.get("io")) {
-      req.app.get("io").to(req.user.id.toString()).emit("task-created", task);
+      req.app.get("io").to(`user-${req.user.id}`).emit("task-created", {
+        success: true,
+        task,
+        timestamp: new Date().toISOString(),
+      });
     }
 
     res.status(201).json({
@@ -219,7 +223,19 @@ const updateTask = async (req, res) => {
 
     // Emit socket event for real-time update
     if (req.app.get("io")) {
-      req.app.get("io").to(req.user.id.toString()).emit("task-updated", task);
+      const io = req.app.get("io");
+      // Emit to user's room
+      io.to(`user-${req.user.id}`).emit("task-updated", {
+        success: true,
+        task,
+        timestamp: new Date().toISOString(),
+      });
+      // Emit to task-specific room (for other users viewing this task)
+      io.to(`task-${task._id}`).emit("task-updated", {
+        success: true,
+        task,
+        timestamp: new Date().toISOString(),
+      });
     }
 
     res.status(200).json({
@@ -264,10 +280,20 @@ const deleteTask = async (req, res) => {
 
     // Emit socket event for real-time update
     if (req.app.get("io")) {
-      req.app
-        .get("io")
-        .to(req.user.id.toString())
-        .emit("task-deleted", { id: req.params.id });
+      const io = req.app.get("io");
+      const taskId = req.params.id;
+      // Emit to user's room
+      io.to(`user-${req.user.id}`).emit("task-deleted", {
+        success: true,
+        taskId,
+        timestamp: new Date().toISOString(),
+      });
+      // Emit to task-specific room (for other users viewing this task)
+      io.to(`task-${taskId}`).emit("task-deleted", {
+        success: true,
+        taskId,
+        timestamp: new Date().toISOString(),
+      });
     }
 
     res.status(200).json({
@@ -329,10 +355,19 @@ const updateTaskStatus = async (req, res) => {
 
     // Emit socket event for real-time update
     if (req.app.get("io")) {
-      req.app
-        .get("io")
-        .to(req.user.id.toString())
-        .emit("task-status-updated", task);
+      const io = req.app.get("io");
+      // Emit to user's room
+      io.to(`user-${req.user.id}`).emit("task-status-updated", {
+        success: true,
+        task,
+        timestamp: new Date().toISOString(),
+      });
+      // Emit to task-specific room (for other users viewing this task)
+      io.to(`task-${task._id}`).emit("task-status-updated", {
+        success: true,
+        task,
+        timestamp: new Date().toISOString(),
+      });
     }
 
     res.status(200).json({

@@ -55,37 +55,60 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Socket.io connection handling
+// Socket.io connection handling with authentication
+io.use(async (socket, next) => {
+  try {
+    const token = socket.handshake.auth.token || socket.handshake.query.token;
+
+    if (!token) {
+      return next(new Error("Authentication error: No token provided"));
+    }
+
+    const jwt = require("jsonwebtoken");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Attach user ID to socket
+    socket.userId = decoded.userId;
+    next();
+  } catch (error) {
+    console.error("Socket authentication error:", error.message);
+    next(new Error("Authentication error: Invalid token"));
+  }
+});
+
 io.on("connection", (socket) => {
-  console.log(`🔌 New client connected: ${socket.id}`);
+  console.log(`🔌 New client connected: ${socket.id} (User: ${socket.userId})`);
 
-  // Join user room for private updates
-  socket.on("join-user-room", (userId) => {
-    socket.join(`user-${userId}`);
-    console.log(`Client ${socket.id} joined user room: ${userId}`);
-  });
+  // Automatically join user's own room
+  socket.join(`user-${socket.userId}`);
+  console.log(`Client ${socket.id} joined user room: user-${socket.userId}`);
 
-  // Join task room for specific task updates
+  // Join task room for specific task updates (with validation)
   socket.on("join-task-room", (taskId) => {
-    socket.join(`task-${taskId}`);
-    console.log(`Client ${socket.id} joined task room: ${taskId}`);
+    if (taskId && typeof taskId === "string") {
+      socket.join(`task-${taskId}`);
+      console.log(`Client ${socket.id} joined task room: task-${taskId}`);
+    } else {
+      console.error("Invalid task ID provided");
+    }
   });
 
-  // Handle task creation (from frontend)
-  socket.on("create-task", (taskData) => {
-    console.log("Task creation requested via socket:", taskData);
-    // This would be handled by your API, socket just broadcasts
-  });
-
-  // Handle task updates (from frontend)
-  socket.on("update-task", (updatedTask) => {
-    // Broadcast to all users in the task room
-    io.to(`task-${updatedTask._id}`).emit("task-updated", updatedTask);
+  // Leave task room
+  socket.on("leave-task-room", (taskId) => {
+    if (taskId && typeof taskId === "string") {
+      socket.leave(`task-${taskId}`);
+      console.log(`Client ${socket.id} left task room: task-${taskId}`);
+    }
   });
 
   // Handle disconnect
-  socket.on("disconnect", () => {
-    console.log(`Client disconnected: ${socket.id}`);
+  socket.on("disconnect", (reason) => {
+    console.log(`Client disconnected: ${socket.id} (Reason: ${reason})`);
+  });
+
+  // Handle errors
+  socket.on("error", (error) => {
+    console.error(`Socket error for ${socket.id}:`, error);
   });
 });
 
