@@ -2,17 +2,31 @@
   "name": "task-manager-backend-api-mern",
   "version": "1.0.0",
   "description": "Task Manager - Core Stack: MERN + Socket.io + JWT + Redis",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "build": "echo 'No build step required for Node.js'",
+    "test": "echo 'No tests yet' && exit 0",
+    "render:deploy": "npm install && npm start"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/baqar-abbas/task-manager-backend-api-mern.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "socket.io",
+    "jwt",
+    "redis"
+  ],
+  "author": "Baqar Abbas",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {

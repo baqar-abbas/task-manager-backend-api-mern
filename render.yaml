@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: task-manager-api
+    env: node
+    branch: deploy
+    autoDeploy: true
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20
+      - key: MONGODB_URI
+        sync: false # set in Render dashboard or use secrets
+      - key: JWT_SECRET
+        generateValue: true
+      # Do NOT set PORT; Render injects it automatically
+      - key: FRONTEND_URL
+        value: http://localhost:5173 # temporary; switch to your frontend’s Render URL later
+      - key: BCRYPT_SALT_ROUNDS
+        value: "10"
