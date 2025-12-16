@@ -22,7 +22,8 @@ const corsOptions = {
       "http://localhost:5173",
       "http://localhost:3000",
       "http://localhost:5000",
-      "https://task-manager-client.onrender.com", // Your frontend on Render
+      "https://task-manager-client-csx8.onrender.com", // Your frontend on Render
+      "https://task-manager-client.onrender.com", // Alternative frontend URL
       "https://task-manager-frontend.onrender.com", // Alternative name
     ];
 

@@ -18,6 +18,6 @@ services:
         generateValue: true
       # Do NOT set PORT; Render injects it automatically
       - key: FRONTEND_URL
-        value: http://localhost:5173 # temporary; switch to your frontend’s Render URL later
+        value: https://task-manager-client-csx8.onrender.com
       - key: BCRYPT_SALT_ROUNDS
         value: "10"
