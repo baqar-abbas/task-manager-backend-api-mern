@@ -79,8 +79,111 @@ const updateProfileValidation = [
     .normalizeEmail(),
 ];
 
+/**
+ * Validation rules for creating a task
+ */
+const createTaskValidation = [
+  body("title")
+    .trim()
+    .notEmpty()
+    .withMessage("Task title is required")
+    .isLength({ min: 3, max: 200 })
+    .withMessage("Task title must be between 3 and 200 characters"),
+
+  body("description")
+    .optional()
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage("Description cannot exceed 1000 characters"),
+
+  body("status")
+    .optional()
+    .isIn(["pending", "in-progress", "completed", "archived"])
+    .withMessage("Invalid status value"),
+
+  body("priority")
+    .optional()
+    .isIn(["low", "medium", "high", "urgent"])
+    .withMessage("Invalid priority value"),
+
+  body("dueDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Due date must be a valid date"),
+
+  body("tags").optional().isArray().withMessage("Tags must be an array"),
+
+  body("isPublic")
+    .optional()
+    .isBoolean()
+    .withMessage("isPublic must be a boolean"),
+
+  body("estimatedTime")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Estimated time must be a positive number"),
+];
+
+/**
+ * Validation rules for updating a task
+ */
+const updateTaskValidation = [
+  body("title")
+    .optional()
+    .trim()
+    .isLength({ min: 3, max: 200 })
+    .withMessage("Task title must be between 3 and 200 characters"),
+
+  body("description")
+    .optional()
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage("Description cannot exceed 1000 characters"),
+
+  body("status")
+    .optional()
+    .isIn(["pending", "in-progress", "completed", "archived"])
+    .withMessage("Invalid status value"),
+
+  body("priority")
+    .optional()
+    .isIn(["low", "medium", "high", "urgent"])
+    .withMessage("Invalid priority value"),
+
+  body("dueDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Due date must be a valid date"),
+
+  body("tags").optional().isArray().withMessage("Tags must be an array"),
+
+  body("isPublic")
+    .optional()
+    .isBoolean()
+    .withMessage("isPublic must be a boolean"),
+
+  body("estimatedTime")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Estimated time must be a positive number"),
+];
+
+/**
+ * Validation rules for updating task status
+ */
+const updateTaskStatusValidation = [
+  body("status")
+    .notEmpty()
+    .withMessage("Status is required")
+    .isIn(["pending", "in-progress", "completed", "archived"])
+    .withMessage("Invalid status value"),
+];
+
 module.exports = {
   registerValidation,
   loginValidation,
   updateProfileValidation,
+  createTaskValidation,
+  updateTaskValidation,
+  updateTaskStatusValidation,
 };

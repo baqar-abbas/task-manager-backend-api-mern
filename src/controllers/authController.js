@@ -185,23 +185,22 @@ const updateProfile = async (req, res) => {
 
     // Check if username or email already taken by another user
     if (username || email) {
-      const existingUser = await User.findOne({
-        $and: [{ _id: { $ne: userId } }, { $or: [] }],
-      });
+      const orConditions = [];
 
       if (username) {
-        existingUser.$or.push({ username });
+        orConditions.push({ username });
       }
       if (email) {
-        existingUser.$or.push({ email });
+        orConditions.push({ email });
       }
 
-      if (existingUser && existingUser.$or.length > 0) {
-        const user = await User.findOne({
-          $and: [{ _id: { $ne: userId } }, { $or: existingUser.$or }],
+      if (orConditions.length > 0) {
+        const existingUser = await User.findOne({
+          _id: { $ne: userId },
+          $or: orConditions,
         });
 
-        if (user) {
+        if (existingUser) {
           return res.status(400).json({
             success: false,
             message: "Username or email already taken",
@@ -232,6 +231,7 @@ const updateProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error updating profile",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
