@@ -178,64 +178,6 @@ const getMe = async (req, res) => {
  * @access  Private
  */
 
-// const updateProfile = async (req, res) => {
-//   try {
-//     const { username, email } = req.body;
-//     const userId = req.user.id;
-
-//     // Check if username or email already taken by another user
-//     if (username || email) {
-//       const existingUser = await User.findOne({
-//         $and: [{ _id: { $ne: userId } }, { $or: [] }],
-//       });
-
-//       if (username) {
-//         existingUser.$or.push({ username });
-//       }
-//       if (email) {
-//         existingUser.$or.push({ email });
-//       }
-
-//       if (existingUser && existingUser.$or.length > 0) {
-//         const user = await User.findOne({
-//           $and: [{ _id: { $ne: userId } }, { $or: existingUser.$or }],
-//         });
-
-//         if (user) {
-//           return res.status(400).json({
-//             success: false,
-//             message: "Username or email already taken",
-//           });
-//         }
-//       }
-//     }
-
-//     // Update user
-//     const updateData = {};
-//     if (username) updateData.username = username;
-//     if (email) updateData.email = email;
-
-//     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-//       new: true,
-//       runValidators: true,
-//     }).select("-password");
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Profile updated successfully",
-//       data: {
-//         user: updatedUser,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Update profile error:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Server error updating profile",
-//     });
-//   }
-// };
-
 const updateProfile = async (req, res) => {
   try {
     const { username, email } = req.body;
